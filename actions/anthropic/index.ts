@@ -109,7 +109,7 @@ export async function generateTitleAndDescription(script: string) {
       max_tokens: 1000,
       temperature: 0.7,
       system:
-        "You are an expert YouTube content creator. Your task is to generate a catchy, SEO-optimized title and a detailed description for a video based on the provided script. The output should be JSON formatted with 'title' and 'description' keys.",
+        "You are an expert YouTube content creator. Your task is to generate a catchy, SEO-optimized title and a detailed description for a video based on the provided script. The output should be JSON formatted with 'title' and 'description' keys. IMPORTANT: The output must be valid JSON. Escape all newlines within value strings as \\n.",
       messages: [
         {
           role: "user",
@@ -121,19 +121,31 @@ export async function generateTitleAndDescription(script: string) {
     const content = message.content[0];
 
     if (content.type === "text") {
+      let text = content.text;
+
+      // Clean up markdown code blocks if present
+      text = text.replace(/```json\n?|```/g, "");
+
+      // Locate the JSON object
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+
+      if (start !== -1 && end !== -1) {
+        text = text.substring(start, end + 1);
+      }
+
       try {
-        const json = JSON.parse(content.text);
+        const json = JSON.parse(text);
         return {
           title: json.title,
           description: json.description,
           usage: message.usage,
         };
       } catch (e) {
-        // Fallback if JSON parsing fails, try to extract logical parts or just return raw text if that fails.
-        // For now let's assume Claude is good at following instructions or we can refine the prompt to enforce JSON mode if available or better prompting.
-        // A simple fallback might be regex.
-        const titleMatch = content.text.match(/"title":\s*"(.*?)"/);
-        const descMatch = content.text.match(/"description":\s*"(.*?)"/);
+        // Fallback: If parsing fails (often due to unescaped newlines in the description), 
+        // attempt robust regex extraction that supports multi-line strings.
+        const titleMatch = text.match(/"title"\s*:\s*"([\s\S]*?)"\s*,/);
+        const descMatch = text.match(/"description"\s*:\s*"([\s\S]*?)"\s*}/);
 
         if (titleMatch && descMatch) {
           return {
