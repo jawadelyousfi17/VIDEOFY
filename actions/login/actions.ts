@@ -8,6 +8,8 @@ export async function signInWithGoogle() {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
+  console.log("ORIGIN = ", origin);
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
