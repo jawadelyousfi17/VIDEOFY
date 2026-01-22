@@ -49,18 +49,27 @@ export async function generateSpeech(input: GenerateSpeechInput) {
     const fileName = `audio-${Date.now()}.mp3`;
     const publicDir = join(process.cwd(), "public", "temp_audio");
 
-    if (!existsSync(publicDir)) {
-      await mkdir(publicDir, { recursive: true });
+    try {
+      if (!existsSync(publicDir)) {
+        await mkdir(publicDir, { recursive: true });
+      }
+    } catch (error) {
+      console.error("Error creating temp_audio directory:", error);
     }
 
     const filePath = join(publicDir, fileName);
     await writeFile(filePath, buffer);
 
-    const publicUrl = `/temp_audio/${fileName}`;
+    // Convert buffer to base64 for immediate client-side playback
+    // This avoids issues where the static file isn't immediately served or 
+    // accessible (e.g. in serverless environments without persistent public storage)
+    const base64Audio = buffer.toString("base64");
+    const mimeType = "audio/mpeg"; 
+    const publicUrl = `data:${mimeType};base64,${base64Audio}`;
 
     return {
-      filePath, // Server-side path for ffmpeg
-      publicUrl, // Client-side URL for playback
+      filePath, // Server-side path for ffmpeg (local dev only, usually)
+      publicUrl, // Data URI for robust client playback
       format: "mp3",
       size: audioBuffer.byteLength,
     };
