@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }} # <-- Changed from 'key' to 'password'
           script: |
-            cd ~/your-project-folder
+            cd /VIDEOFY
             git pull origin main
             export NODE_OPTIONS="--max-old-space-size=4096"
             npm install
