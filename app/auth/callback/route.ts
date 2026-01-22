@@ -2,12 +2,18 @@ import { NextResponse } from "next/server";
 // The client you created from the Server-Side Auth instructions
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/utils/prisma";
+import { headers } from "next/headers";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/";
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") ?? "http";
+  // fallback to host if origin is missing
+  const origin = headersList.get("origin") ?? `${protocol}://${host}`;
 
   if (code) {
     const supabase = await createClient();
