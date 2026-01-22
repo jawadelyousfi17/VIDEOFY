@@ -19,6 +19,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }} # <-- Changed from 'key' to 'password'
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             cd /VIDEOFY
             git pull origin main
             export NODE_OPTIONS="--max-old-space-size=4096"
