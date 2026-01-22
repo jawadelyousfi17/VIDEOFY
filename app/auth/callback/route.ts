@@ -38,6 +38,7 @@ export async function GET(request: Request) {
         // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
         return NextResponse.redirect(`${origin}${next}`);
       } else {
+        console.log(`Origin - ${origin}${next}`);
         return NextResponse.redirect(`${origin}${next}`);
       }
     }
