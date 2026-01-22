@@ -61,10 +61,10 @@ export async function generateSpeech(input: GenerateSpeechInput) {
     await writeFile(filePath, buffer);
 
     // Convert buffer to base64 for immediate client-side playback
-    // This avoids issues where the static file isn't immediately served or 
+    // This avoids issues where the static file isn't immediately served or
     // accessible (e.g. in serverless environments without persistent public storage)
     const base64Audio = buffer.toString("base64");
-    const mimeType = "audio/mpeg"; 
+    const mimeType = "audio/mpeg";
     const publicUrl = `data:${mimeType};base64,${base64Audio}`;
 
     return {
