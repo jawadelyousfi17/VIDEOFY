@@ -24,11 +24,15 @@ export async function generateSpeech(input: GenerateSpeechInput) {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        // Use S1 model as inspired by the provided snippet
+        model: "s1",
       },
       body: JSON.stringify({
         reference_id: input.voiceId,
         text: input.content,
         format: "mp3",
+        mp3_bitrate: 128,
+        normalize: true,
         latency: "normal",
       }),
     });

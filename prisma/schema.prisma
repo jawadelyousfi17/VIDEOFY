@@ -21,7 +21,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  presets Preset[]
+  presets     Preset[]
+  ttsTasks    TTSTask[]
+  savedVoices SavedVoice[]
 }
 
 model Preset {
@@ -45,4 +47,33 @@ model InspirationLink {
 
   presetId String
   preset   Preset @relation(fields: [presetId], references: [id], onDelete: Cascade)
+}
+
+model TTSTask {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  prompt  String
+  voiceId String
+  status  String @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+
+  audioUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SavedVoice {
+  id      String @id @default(uuid())
+  name    String
+  voiceId String // The ID from Fish Audio
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, voiceId])
 }

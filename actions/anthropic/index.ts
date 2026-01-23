@@ -142,7 +142,7 @@ export async function generateTitleAndDescription(script: string) {
           usage: message.usage,
         };
       } catch (e) {
-        // Fallback: If parsing fails (often due to unescaped newlines in the description), 
+        // Fallback: If parsing fails (often due to unescaped newlines in the description),
         // attempt robust regex extraction that supports multi-line strings.
         const titleMatch = text.match(/"title"\s*:\s*"([\s\S]*?)"\s*,/);
         const descMatch = text.match(/"description"\s*:\s*"([\s\S]*?)"\s*}/);

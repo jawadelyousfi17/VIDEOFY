@@ -30,10 +30,10 @@ export default async function Navbar() {
               Create
             </Link>
             <Link
-              href="/dashboard"
+              href="/app/tts"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              Dashboard
+              TTS
             </Link>
             <Link
               href="/more"
